@@ -1,4 +1,55 @@
-// 1. IMPORTACIONES (Traemos las herramientas al consultorio)
+require('dotenv').config(); // Abre la caja fuerte (.env)
+const express = require('express');
+const cors = require('cors');
+const { Pool } = require('pg'); // Importa la conexión a Postgres
+
+const app = express();
+
+// Middlewares (Los recepcionistas)
+app.use(cors());
+app.use(express.json());
+
+// Configuración de la base de datos usando la llave secreta
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+});
+
+// Ruta (Endpoint) para registrar una nueva visita
+app.post('/api/visits', async (req, res) => {
+    try {
+        // 1. Identificamos quién nos visita (por ahora usamos la IP)
+        const userIp = req.ip || 'ip_desconocida';
+
+        // 2. El Deportólogo anota la visita en la libreta (Base de Datos)
+        await pool.query(
+            'INSERT INTO visits (ip_hash) VALUES ($1)',
+            [userIp]
+        );
+
+        // 3. El Deportólogo cuenta cuántas visitas hay en total
+        const result = await pool.query('SELECT COUNT(*) FROM visits');
+        const totalVisits = result.rows[0].count;
+
+        // 4. Le respondemos a React con el número exacto
+        res.json({ success: true, totalVisits: parseInt(totalVisits) });
+
+    } catch (error) {
+        console.error('Error en la base de datos:', error);
+        res.status(500).json({ success: false, message: 'Error interno del servidor' });
+    }
+});
+
+// Encender el servidor
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+    console.log(`¡Deportólogo encendido y escuchando en el puerto ${PORT}! 🚀`);
+});
+
+
+
+
+
+/*// 1. IMPORTACIONES (Traemos las herramientas al consultorio)
 const express = require('express'); // Express: El sistema de recepción del consultorio
 const cors = require('cors');       // Cors: El permiso para que los pacientes de React puedan entrar
 
@@ -34,4 +85,4 @@ app.get('/api/stats', (req, res) => {
 // 6. ABRIR EL CONSULTORIO
 app.listen(PORT, () => {
     console.log(`🏥 El Deportólogo está atendiendo en http://localhost:${PORT}`);
-});
+});*/
