@@ -29,7 +29,7 @@ function App() {
       const response = await fetch(`https://api.github.com/users/${username}`);
       
       if (!response.ok) {
-        throw new Error('Atleta no encontrado');
+        throw new Error('Perfil no encontrado');
       }
 
       const data = await response.json();
@@ -42,45 +42,75 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Recepción de mi Perfil de GitHub</h1>
+    <main className="main-container">
       
-      {error ? (
-        <p style={{ color: 'red' }}>¡Ups! El Deportólogo no contesta. ¿El backend está encendido?</p>
-      ) : (
-        <p>Visitantes totales del perfil: <strong>{visits}</strong></p>
-      )}
+      <h1>Github Profile Tracker</h1>
+      
+      <div className="visit-counter">
+        <span>👤</span> 
+        {error ? (
+          <span className="error-text">Servidor desconectado</span>
+        ) : (
+          <span>Visitantes totales: <strong>{visits}</strong></span>
+        )}
+      </div>
 
       <hr />
       
-      <form onSubmit={handleSearch}>
-        <h2>Buscar Perfil de GitHub</h2>
+      <form onSubmit={handleSearch} className="search-form">
         <input 
           type="text" 
-          placeholder="Escribe un usuario..." 
+          placeholder="Escribe un usuario (ej. NKGarzonGrajales)..." 
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          className="search-input"
         />
-        <button type="submit">Buscar Perfil</button>
+        <button type="submit" className="search-button">Buscar Perfil</button>
       </form>
 
-      {searchError && <p style={{ color: 'orange' }}>No pudimos encontrar a ese usuario en GitHub. 🕵️‍♀️</p>}
-
-      {githubData && (
-        <div style={{ border: '1px solid #ccc', padding: '20px', marginTop: '20px', borderRadius: '10px' }}>
-          <img 
-            src={githubData.avatar_url} 
-            alt="Foto de perfil" 
-            style={{ width: '150px', borderRadius: '50%' }} 
-          />
-          <h3>{githubData.name || githubData.login}</h3>
-          <p>{githubData.bio}</p>
-          <p><strong>Repositorios Públicos:</strong> {githubData.public_repos}</p>
-          <p><strong>Seguidores:</strong> {githubData.followers}</p>
-        </div>
+      {searchError && (
+        <p className="error-message">No pudimos encontrar a ese perfil en la base de datos de GitHub. 🤔</p>
+      )}
+      
+      {!githubData && !searchError && (
+        <p className="status-message">Escribe un nombre arriba para ver el expediente del usuario.</p>
       )}
 
-    </div>
+      {githubData && (
+        <article className="github-card">
+          
+          <div className="avatar-container">
+            <img 
+              src={githubData.avatar_url} 
+              alt={`Foto de perfil de ${githubData.login}`} 
+              className="avatar-img"
+            />
+          </div>
+
+          <div className="athlete-info">
+            <h2 className="athlete-name">{githubData.name || githubData.login}</h2>
+            {githubData.bio && <p className="athlete-bio">{githubData.bio}</p>}
+          </div>
+
+          <div className="stats-container">
+            <div className="stat-box">
+              <div className="stat-value">{githubData.public_repos}</div>
+              <div className="stat-label">Repos</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-value">{githubData.followers}</div>
+              <div className="stat-label">Seguidores</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-value">{githubData.following}</div>
+              <div className="stat-label">Siguiendo</div>
+            </div>
+          </div>
+
+        </article>
+      )}
+
+    </main>
   )
 }
 
