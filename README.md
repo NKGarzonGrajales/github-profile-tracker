@@ -7,7 +7,7 @@ An elegant and minimalist Full-Stack application that allows users to search for
 - 🔍 **Profile Search Engine:** Asynchronous integration with the public GitHub API to fetch real-time data.
 - 📊 **Global Visit Counter:** Persistent tracking of page views, managed by a custom REST API.
 - 🎨 **Professional UI/UX Design:** Minimalist interface, restricted color palette, and clear visual hierarchy.
-- ♿ **Accessibility (A11Y):** Safe animations (using `clip-path`) that detect and respect the user's operating system `prefers-reduced-motion` settings.
+
 
 ## 🛠️ Tech Stack
 
@@ -64,8 +64,6 @@ cd frontend
 npm install
 npm run dev
 ```
-
-Visit `http://localhost:5173` in your web browser. You're all set! 🎉
 
 ---
 
