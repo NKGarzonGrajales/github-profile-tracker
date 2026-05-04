@@ -6,8 +6,15 @@ const { Pool } = require('pg'); // Importa la conexión a Postgres
 const app = express();
 
 // Middlewares (Los recepcionistas)
-app.use(cors());
+//app.use(cors());
+// CAMBIO 1: Activamos la configuración detallada de CORS para que Vercel no se bloquee
+app.use(cors({
+    origin: '*', 
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
+
 
 // Configuración de la base de datos usando la llave secreta
 const pool = new Pool({
@@ -19,6 +26,9 @@ app.post('/api/visits', async (req, res) => {
     try {
         // 1. Identificamos quién nos visita (por ahora usamos la IP)
         const userIp = req.ip || 'ip_desconocida';
+
+        // CAMBIO 2: Ajustamos para detectar la IP real cuando el servidor está en la nube (Render)
+        const userIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'ip_desconocida';
 
         // 2. El Deportólogo anota la visita en la libreta (Base de Datos)
         await pool.query(
@@ -40,11 +50,11 @@ app.post('/api/visits', async (req, res) => {
 });
 
 // Encender el servidor
+// CAMBIO 3: Aseguramos que use el puerto que Render le asigne automáticamente
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`¡Deportólogo encendido y escuchando en el puerto ${PORT}! 🚀`);
 });
-
 
 
 
