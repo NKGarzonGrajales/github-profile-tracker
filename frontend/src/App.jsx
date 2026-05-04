@@ -10,7 +10,7 @@ function App() {
 
   useEffect(() => {
    // fetch('http://localhost:3001/api/visits', { method: 'POST' })
-   fetch('[https://github-profile-tracker.onrender.com/api/visits](https://github-profile-tracker.onrender.com/api/visits)', { method: 'POST' })
+   fetch('https://github-profile-tracker.onrender.com/api/visits', { method: 'POST' })
       .then(respuesta => respuesta.json())
       .then(datos => {
         if (datos.success) setVisits(datos.totalVisits);
