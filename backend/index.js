@@ -24,8 +24,7 @@ const pool = new Pool({
 // Ruta (Endpoint) para registrar una nueva visita
 app.post('/api/visits', async (req, res) => {
     try {
-        // 1. Identificamos quién nos visita (por ahora usamos la IP)
-        const userIp = req.ip || 'ip_desconocida';
+       // const userIp = req.ip || 'ip_desconocida'; // 1. Identificamos quién nos visita (por ahora usamos la IP)
 
         // CAMBIO 2: Ajustamos para detectar la IP real cuando el servidor está en la nube (Render)
         const userIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'ip_desconocida';
